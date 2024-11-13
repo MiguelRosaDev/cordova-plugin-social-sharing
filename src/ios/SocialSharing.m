@@ -70,7 +70,7 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
         NSArray *activityItems = @[message, fileURL];
         UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
         
-        activityVC.excludedActivityTypes = @[UIActivityTypePostToFacebook, UIActivityTypePostToTwitter];
+        //activityVC.excludedActivityTypes = @[UIActivityTypePostToFacebook, UIActivityTypePostToTwitter];
         
         // Ensure presentation on main thread
         dispatch_async(dispatch_get_main_queue(), ^{
