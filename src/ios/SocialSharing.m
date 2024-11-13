@@ -203,10 +203,10 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
 #pragma GCC diagnostic warning "-Wdeprecated-declarations"
       }
 
-    NSArray * socialSharingExcludeActivities = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"SocialSharingExcludeActivities"];
-    if (socialSharingExcludeActivities!=nil && [socialSharingExcludeActivities count] > 0) {
-      activityVC.excludedActivityTypes = socialSharingExcludeActivities;
-    }
+    //NSArray * socialSharingExcludeActivities = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"SocialSharingExcludeActivities"];
+    //if (socialSharingExcludeActivities!=nil && [socialSharingExcludeActivities count] > 0) {
+    //  activityVC.excludedActivityTypes = socialSharingExcludeActivities;
+    //}
 
     dispatch_async(dispatch_get_main_queue(), ^(void){
       // iPad on iOS >= 8 needs a different approach
