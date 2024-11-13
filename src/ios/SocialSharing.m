@@ -62,27 +62,34 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
 
 - (void)newShareIOS:(CDVInvokedUrlCommand*)command {
 
-    NSString *message   = [command.arguments objectAtIndex:0];
-    NSString *fileURL   = [command.arguments objectAtIndex:1];
+    NSString *message = [command.arguments objectAtIndex:0];
+    NSString *fileURLString = [command.arguments objectAtIndex:1];
+    NSURL *fileURL = [NSURL URLWithString:fileURLString];
+    
     if (fileURL) {
         NSArray *activityItems = @[message, fileURL];
         UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
         
         activityVC.excludedActivityTypes = @[UIActivityTypePostToFacebook, UIActivityTypePostToTwitter];
         
-        [self presentViewController:activityVC animated:YES completion:nil];
+        // Ensure presentation on main thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.viewController presentViewController:activityVC animated:YES completion:nil];
+        });
         
         activityVC.completionWithItemsHandler = ^(UIActivityType activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+            CDVPluginResult *pluginResult;
             if (completed) {
-                CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"File Shared"];
-                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"File Shared"];
             } else {
-                CDVPluginResult * pluginResultError = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Error sharing file"];
-                [self.commandDelegate sendPluginResult:pluginResultError callbackId:command.callbackId];
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Error sharing file"];
             }
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         };
     } else {
         NSLog(@"File URL is nil!");
+        CDVPluginResult *pluginResultError = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Invalid file URL"];
+        [self.commandDelegate sendPluginResult:pluginResultError callbackId:command.callbackId];
     }
 }
 
