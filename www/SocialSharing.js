@@ -56,6 +56,15 @@ SocialSharing.prototype.share = function (message, subject, fileOrFileArray, url
   cordova.exec(successCallback, this._getErrorCallback(errorCallback, "share"), "SocialSharing", "share", [message, subject, this._asArray(fileOrFileArray), url, iPadCoordinates]);
 };
 
+SocialSharing.prototype.shareInternal = function (message, subject, fileOrFileArray, url, iPadCoordinates, successCallback, errorCallback) {
+  if (typeof iPadCoordinates === 'function') {
+    errorCallback = successCallback;
+    successCallback = iPadCoordinates;
+    iPadCoordinates = "";
+  }
+  cordova.exec(successCallback, this._getErrorCallback(errorCallback, "shareInternal"), "SocialSharing", "shareInternal", [message, subject, this._asArray(fileOrFileArray), url, iPadCoordinates]);
+};
+
 SocialSharing.prototype.shareViaTwitter = function (message, file /* multiple not allowed by twitter */, url, successCallback, errorCallback) {
   var fileArray = this._asArray(file);
   var ecb = this._getErrorCallback(errorCallback, "shareViaTwitter");
