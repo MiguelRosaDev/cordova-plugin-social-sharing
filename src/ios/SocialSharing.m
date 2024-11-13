@@ -60,6 +60,32 @@ static NSString *const kShareOptionIPadCoordinates = @"iPadCoordinates";
   return rect;
 }
 
+- (void)newShareIOS:(CDVInvokedUrlCommand*)command {
+
+    NSString *message   = [command.arguments objectAtIndex:0];
+    NSString *fileURL   = [command.arguments objectAtIndex:1];
+    if (fileURL) {
+        NSArray *activityItems = @[message, fileURL];
+        UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
+        
+        activityVC.excludedActivityTypes = @[UIActivityTypePostToFacebook, UIActivityTypePostToTwitter];
+        
+        [self presentViewController:activityVC animated:YES completion:nil];
+        
+        activityVC.completionWithItemsHandler = ^(UIActivityType activityType, BOOL completed, NSArray *returnedItems, NSError *activityError) {
+            if (completed) {
+                CDVPluginResult * pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"File Shared"];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            } else {
+                CDVPluginResult * pluginResultError = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Error sharing file"];
+                [self.commandDelegate sendPluginResult:pluginResultError callbackId:command.callbackId];
+            }
+        };
+    } else {
+        NSLog(@"File URL is nil!");
+    }
+}
+
 - (void)share:(CDVInvokedUrlCommand*)command {
   [self shareInternal:command
           withOptions:@{
